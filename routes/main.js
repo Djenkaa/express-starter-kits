@@ -11,6 +11,5 @@ module.exports = (router, passport)=>{
     // POST data
     router.post('/data/:id', MainController.data);
 
-
     return router;
 }

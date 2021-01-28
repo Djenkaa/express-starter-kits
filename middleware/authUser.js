@@ -10,36 +10,39 @@ var user = {
 
 module.exports = (passport)=>{
 
-    passport.use(new localStrategy({
+    // Passport local strategy
+    passport.use('login', new localStrategy({
         usernameField: 'email',
         passwordField: 'password'
-    }), 
+    },
     (email, password, done)=>{
 
         if(user.email === email){
 
             return done(null, user);
-        }else{
-
-            return done(null, false, {message: 'There is no such user in database!'});
         }
 
-    });
+        return done(null, false, {message: 'There is no such user in database!'});
+    }
+    ));
 
+    // Serialize user
     passport.serializeUser((user, done) => {
 
         done(null,user.id);
       });
-      
+     
+    // Deserialize user
     passport.deserializeUser((userId, done) => {
         
         done(null, user);
       });
       
     
+    // Check auth user
     return (req, res, next)=>{
 
-        passport.authenticate('local', (err, user, info)=>{
+        passport.authenticate('login', (err, user, info)=>{
 
             if(err){
 
