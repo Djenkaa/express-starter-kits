@@ -5,8 +5,12 @@ const session = require('express-session');
 const sessionStore = require('session-file-store')(session);
 const path = require('path');
 const passport = require('passport');
+const flash = require('express-flash');
 
 const v1Routes = require('./routes/index')(express, passport);
+
+// Passport local configuration
+require('./config/passport')(passport);
 
 const app = express();
 
@@ -18,6 +22,9 @@ app.use(morgan('dev'));
 
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({extended: true, limit: '50mb'}));
+
+// Flash message
+app.use(flash());
 
 // Session
 app.use(session({
@@ -37,7 +44,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // V1 routes
-app.use('/v1', v1Routes);
+app.use(v1Routes);
 
 
 // Catch 404 and forward to error handler

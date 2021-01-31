@@ -1,64 +1,16 @@
-const localStrategy = require('passport-local').Strategy;
+module.exports = (req, res, next)=>{
 
-var user = {
-    id: 1,
-    name: 'Mihajlo',
-    lastName: 'Crnobrnja',
-    age: 24,
-    email: 'mihajlosmex@gmail.com'
-}
+    const authRoutes = ['/login', '/register'];
 
-module.exports = (passport)=>{
+    if(req.isAuthenticated()){
 
-    // Passport local strategy
-    passport.use('login', new localStrategy({
-        usernameField: 'email',
-        passwordField: 'password'
-    },
-    (email, password, done)=>{
+        if(authRoutes.includes(req.url)){
+          
+           return res.redirect('/home');
+        }else{
 
-        if(user.email === email){
-
-            return done(null, user);
+            return next();
         }
-
-        return done(null, false, {message: 'There is no such user in database!'});
     }
-    ));
-
-    // Serialize user
-    passport.serializeUser((user, done) => {
-
-        done(null,user.id);
-      });
-     
-    // Deserialize user
-    passport.deserializeUser((userId, done) => {
-        
-        done(null, user);
-      });
-      
-    
-    // Check auth user
-    return (req, res, next)=>{
-
-        passport.authenticate('login', (err, user, info)=>{
-
-            if(err){
-
-                return next(err);
-            }
-            if (!user) {
-
-                return res.json({status: 'error', message: info.message});
-              }else{
-                
-                req.user = user;
-                return next();
-              }
-            
-              return res.json({status: 'Access Denied!'});
-
-        })(req, res, next);
-    }
+    res.redirect('/auth/login');
 }

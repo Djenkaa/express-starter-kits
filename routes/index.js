@@ -7,8 +7,11 @@ module.exports = (express, passport)=>{
     // Routets
 
     const main = require('./main')(router, passport);
-    router.use('/', main);
+    router.use('/home', main);
+
+    const auth = require('./auth')(router, passport);
+    router.use('/auth', auth);
 
 
-    return router
+    return router;
 }
